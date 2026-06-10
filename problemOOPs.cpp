@@ -1,0 +1,43 @@
+#include <iostream>
+#include <string>
+
+class Recordable{
+    public:
+
+    virtual std::string startRecording() = 0;
+    virtual std::string stopRecording() = 0;
+    virtual ~Recordable() = default;
+};
+class MotionDetectable{
+    public:
+    virtual std::string detectMotion(std::string zone) = 0;
+    virtual ~MotionDetectable() = default;
+};
+class Alertable{
+    public:
+    virtual std::string triggerAlert(std::string reason) = 0;
+    virtual ~Alertable() = default;
+};
+class SecurityCamera : public Recordable, public MotionDetectable , public Alertable{
+    private:
+    std::string cameraId;
+
+    public:
+    SecurityCamera(std::string cameraId) : cameraId(cameraId){}
+    std::string startRecording()override{return (cameraId + ": Recording Start..."); }
+    std::string stopRecording()override{return (cameraId + ": Recording Stop...");}
+    std::string detectMotion(std::string zone)override{return (cameraId + " " + zone + ": Motion Detected.");}
+    std::string triggerAlert(std::string reason)override{return (cameraId + ": " + reason);}
+};
+
+int main(){
+
+    SecurityCamera cam("2341");
+
+    std::cout<< cam.startRecording() <<std::endl;
+    std::cout<< cam.detectMotion("Garden Camera")<< std::endl;
+    std::cout<< cam.triggerAlert("Suspicious Activity")<< std::endl;
+    std::cout<< cam.stopRecording()<< std::endl;
+
+    return 0;
+}
