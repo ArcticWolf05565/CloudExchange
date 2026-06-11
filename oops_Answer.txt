@@ -42,3 +42,52 @@ int main(){
     return 0;
 }
 ===========================================
+
+
+answer 6
+
+#include <iostream>
+#include <string>
+#include <iomanip>
+#include <sstream>
+
+class Product{
+    private:
+    std::string productName;
+    std::string category;
+    double price;
+    int stock;
+
+    public:
+    Product(std::string productName) : Product(productName, "uncategorized"){}
+
+    Product(std::string productName , std::string category): Product(productName, category, 0.0){}
+
+    Product(std::string productName, std::string category, double price) : Product(productName, category, price, 0){}
+    
+    Product(std::string productName, std::string category, double price, int stock): productName(productName), category(category), price(price) , stock(stock){}
+
+    std::string getInfo(){
+
+        std::ostringstream priceStream;
+        priceStream << std::fixed << std::setprecision(2) << price ;
+
+        return ("Product name: " + productName + " " + "Category: " + category + " " + "Price: " + priceStream.str() + " " + "Stock: " + std::to_string(stock));
+    }
+
+};
+
+int main(){
+
+    Product item("Dove Shampoo"); //single parameter
+    Product item2("Razor Blade" , "Grooming"); // 2 parameters
+    Product item3("Bread" , "Bakery", 10); // 3 parameters
+    Product item4("Perfume" , "Body care" , 99, 10);
+
+    std::cout<< item.getInfo() << std::endl;
+    std::cout<< item2.getInfo() << std::endl;
+    std::cout<< item3.getInfo() << std::endl;
+    std::cout<< item4.getInfo() << std::endl;
+
+    return 0;
+}
