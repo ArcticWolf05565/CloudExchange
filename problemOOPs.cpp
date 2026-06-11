@@ -1,43 +1,60 @@
 #include <iostream>
 #include <string>
 
-class Recordable{
-    public:
-
-    virtual std::string startRecording() = 0;
-    virtual std::string stopRecording() = 0;
-    virtual ~Recordable() = default;
-};
-class MotionDetectable{
-    public:
-    virtual std::string detectMotion(std::string zone) = 0;
-    virtual ~MotionDetectable() = default;
-};
-class Alertable{
-    public:
-    virtual std::string triggerAlert(std::string reason) = 0;
-    virtual ~Alertable() = default;
-};
-class SecurityCamera : public Recordable, public MotionDetectable , public Alertable{
+class AppConfig{
     private:
-    std::string cameraId;
-
+    static AppConfig* instance;
+    std::string appName;
+    std::string version;
+    static int instanceCount;
+    
+    AppConfig(std::string appName, std::string version){
+        this->appName = appName;
+        this->version = version;
+        instanceCount++;
+    }
     public:
-    SecurityCamera(std::string cameraId) : cameraId(cameraId){}
-    std::string startRecording()override{return (cameraId + ": Recording Start..."); }
-    std::string stopRecording()override{return (cameraId + ": Recording Stop...");}
-    std::string detectMotion(std::string zone)override{return (cameraId + " " + zone + ": Motion Detected.");}
-    std::string triggerAlert(std::string reason)override{return (cameraId + ": " + reason);}
+    static AppConfig* getInstance(std::string appName, std::string version){
+        if(instance == nullptr){
+            instance = new AppConfig(appName , version);
+        }
+        return instance;
+    }
+    static int getInstanceCount();
+
+    std::string getAppName(){
+        return appName;
+    }
+    std::string getVersion(){
+        return version;
+    }
+};
+
+AppConfig* AppConfig::instance = nullptr;
+int AppConfig::instanceCount = 0;
+
+int AppConfig::getInstanceCount(){
+    return instanceCount;
 };
 
 int main(){
 
-    SecurityCamera cam("2341");
+    AppConfig* app = AppConfig::getInstance("Whatapp", "2.01");
 
-    std::cout<< cam.startRecording() <<std::endl;
-    std::cout<< cam.detectMotion("Garden Camera")<< std::endl;
-    std::cout<< cam.triggerAlert("Suspicious Activity")<< std::endl;
-    std::cout<< cam.stopRecording()<< std::endl;
+    std::cout<< app->getInstanceCount() <<std::endl;
+
+    AppConfig* app1 = AppConfig::getInstance("Whatapp", "2.01");
+
+    std::cout<< app->getInstanceCount() <<std::endl;
+
+    AppConfig* app2 = AppConfig::getInstance("Whatapp", "2.01");
+
+    std::cout<< app->getInstanceCount() <<std::endl;
+
+    std::cout<< app->getAppName() << std::endl;
+    std::cout<< app->getVersion() << std::endl;
+
 
     return 0;
+    
 }
