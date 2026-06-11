@@ -1,60 +1,45 @@
 #include <iostream>
 #include <string>
+#include <algorithm>
+#include <cctype>
 
-class AppConfig{
-    private:
-    static AppConfig* instance;
-    std::string appName;
-    std::string version;
-    static int instanceCount;
-    
-    AppConfig(std::string appName, std::string version){
-        this->appName = appName;
-        this->version = version;
-        instanceCount++;
-    }
+class StringUtils{
     public:
-    static AppConfig* getInstance(std::string appName, std::string version){
-        if(instance == nullptr){
-            instance = new AppConfig(appName , version);
+    std::string format(const std::string& text){
+        std::string temp = text;
+        std::transform(temp.begin() , temp.end() , temp.begin(),::toupper);
+       return temp;
+    }
+    std::string format(const std::string& text, int repeateCount){
+
+        if(repeateCount <= 0) return "";
+        std::string result = text;
+
+        while(repeateCount--){
+          result += " " + text;
         }
-        return instance;
+        return result;
     }
-    static int getInstanceCount();
-
-    std::string getAppName(){
-        return appName;
+    std::string format(const std::string& text, bool addBrackters){
+        if(addBrackters){
+            return ("[" + text + "]");
+        }else{   
+            return text;
+        }
     }
-    std::string getVersion(){
-        return version;
+    std::string format(const std::string& text, const std::string& prefix, const std::string& suffix){
+        return (prefix + text  + suffix);
     }
-};
-
-AppConfig* AppConfig::instance = nullptr;
-int AppConfig::instanceCount = 0;
-
-int AppConfig::getInstanceCount(){
-    return instanceCount;
+    ~StringUtils() = default;
 };
 
 int main(){
 
-    AppConfig* app = AppConfig::getInstance("Whatapp", "2.01");
+    StringUtils test;
 
-    std::cout<< app->getInstanceCount() <<std::endl;
-
-    AppConfig* app1 = AppConfig::getInstance("Whatapp", "2.01");
-
-    std::cout<< app->getInstanceCount() <<std::endl;
-
-    AppConfig* app2 = AppConfig::getInstance("Whatapp", "2.01");
-
-    std::cout<< app->getInstanceCount() <<std::endl;
-
-    std::cout<< app->getAppName() << std::endl;
-    std::cout<< app->getVersion() << std::endl;
-
-
+    std::cout<< test.format("hello")<< std::endl;
+    std::cout << test.format("kali" , 3) << std::endl;
+    std::cout<< test.format("rahul", true)<<std::endl;
+    std::cout<< test.format("2", "H" , "O");
     return 0;
-    
 }
