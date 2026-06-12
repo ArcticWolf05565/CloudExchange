@@ -203,3 +203,80 @@ int main(){
     std::cout<< test.format("2", "H" , "O");
     return 0;
 }
+
+========================================
+Answer 9
+
+#include <iostream>
+#include <string>
+#include <vector>
+
+class Teacher{
+    private:
+    std::string teacherName;
+    std::string subject;
+
+    public:
+    Teacher(std::string teacherName, std::string subject) : teacherName(teacherName) , subject(subject){};
+
+    std::pair<std::string , std::string> getTeacherInfo() const{
+        return {teacherName, subject};
+    }
+};
+class Classroom{
+    private:
+    std::string roomNumber;
+    int capacity;
+    Teacher faculty;
+
+    public:
+    Classroom(std::string roomNumber, int capacity, Teacher faculty): roomNumber(roomNumber), capacity(capacity) , faculty(faculty){};
+
+    std::string getClassroomInfo() const{
+     const auto [tname, sub] = faculty.getTeacherInfo();
+        return ("Teacher name: " + tname + "\n"
+                + "Subject: " + sub + "\n"
+                + "Room no: " + roomNumber + "\n"
+                + "Capacity: " + std::to_string(capacity));
+    }
+};
+class School{
+    private:
+    std::string schoolName;
+    std::vector<Classroom> classroom;
+
+    public:
+    School(std::string schoolName): schoolName(schoolName){};
+
+    void addClassroom(Classroom classroom){
+        this->classroom.push_back(classroom);
+    }
+
+    std::string getSchoolReport(){
+        std::string report = "School name: " + schoolName + "\n---------------------------------\n";
+
+        for(const auto& room: classroom){
+            report += room.getClassroomInfo() + "\n---------------------------------\n";
+        }
+        return report;
+    }
+};
+
+int main(){
+
+    Teacher sir("Sartaj", "Maths");
+    Teacher mam("Arshuma", "English");
+
+    Classroom young("A1", 50, sir);
+    Classroom older("B2", 90, mam);
+
+    School edu("Arshi public school");
+    edu.addClassroom(young);
+    edu.addClassroom(older);
+
+    std::cout<< edu.getSchoolReport() << std::endl;
+    
+
+  
+    return 0;
+}
