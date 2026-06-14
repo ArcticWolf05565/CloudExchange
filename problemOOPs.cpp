@@ -65,5 +65,10 @@ int main()
     std::cout << sum << std::endl;
     std::cout << avg << std::endl;
 
+    std::cout << piece.getOrderSummary() << std::endl;
+    std::cout << piece2.getOrderSummary() << std::endl;
+
+    std::cout<< "Total Products: " << Product::getTotalProducts() << std::endl;
+    std::cout<< "Total Orders: " << Order::getTotalOrder() << std::endl;
     return 0;
 }

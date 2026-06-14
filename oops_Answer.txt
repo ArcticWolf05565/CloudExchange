@@ -154,3 +154,261 @@ int main(){
     return 0;
     
 }
+===============================
+
+Answer 8
+
+#include <iostream>
+#include <string>
+#include <algorithm>
+#include <cctype>
+
+class StringUtils{
+    public:
+    std::string format(const std::string& text){
+        std::string temp = text;
+        std::transform(temp.begin() , temp.end() , temp.begin(),::toupper);
+       return temp;
+    }
+    std::string format(const std::string& text, int repeateCount){
+
+        if(repeateCount <= 0) return "";
+        std::string result = text;
+
+        while(repeateCount--){
+          result += " " + text;
+        }
+        return result;
+    }
+    std::string format(const std::string& text, bool addBrackters){
+        if(addBrackters){
+            return ("[" + text + "]");
+        }else{   
+            return text;
+        }
+    }
+    std::string format(const std::string& text, const std::string& prefix, const std::string& suffix){
+        return (prefix + text  + suffix);
+    }
+    ~StringUtils() = default;
+};
+
+int main(){
+
+    StringUtils test;
+
+    std::cout<< test.format("hello")<< std::endl;
+    std::cout << test.format("kali" , 3) << std::endl;
+    std::cout<< test.format("rahul", true)<<std::endl;
+    std::cout<< test.format("2", "H" , "O");
+    return 0;
+}
+
+========================================
+Answer 9
+
+#include <iostream>
+#include <string>
+#include <vector>
+
+class Teacher{
+    private:
+    std::string teacherName;
+    std::string subject;
+
+    public:
+    Teacher(std::string teacherName, std::string subject) : teacherName(teacherName) , subject(subject){};
+
+    std::pair<std::string , std::string> getTeacherInfo() const{
+        return {teacherName, subject};
+    }
+};
+class Classroom{
+    private:
+    std::string roomNumber;
+    int capacity;
+    Teacher faculty;
+
+    public:
+    Classroom(std::string roomNumber, int capacity, Teacher faculty): roomNumber(roomNumber), capacity(capacity) , faculty(faculty){};
+
+    std::string getClassroomInfo() const{
+     const auto [tname, sub] = faculty.getTeacherInfo();
+        return ("Teacher name: " + tname + "\n"
+                + "Subject: " + sub + "\n"
+                + "Room no: " + roomNumber + "\n"
+                + "Capacity: " + std::to_string(capacity));
+    }
+};
+class School{
+    private:
+    std::string schoolName;
+    std::vector<Classroom> classroom;
+
+    public:
+    School(std::string schoolName): schoolName(schoolName){};
+
+    void addClassroom(Classroom classroom){
+        this->classroom.push_back(classroom);
+    }
+
+    std::string getSchoolReport(){
+        std::string report = "School name: " + schoolName + "\n---------------------------------\n";
+
+        for(const auto& room: classroom){
+            report += room.getClassroomInfo() + "\n---------------------------------\n";
+        }
+        return report;
+    }
+};
+
+int main(){
+
+    Teacher sir("Sartaj", "Maths");
+    Teacher mam("Arshuma", "English");
+
+    Classroom young("A1", 50, sir);
+    Classroom older("B2", 90, mam);
+
+    School edu("Arshi public school");
+    edu.addClassroom(young);
+    edu.addClassroom(older);
+
+    std::cout<< edu.getSchoolReport() << std::endl;
+    
+
+  
+    return 0;
+}
+====================================
+Answer 10
+
+#include <iostream>
+#include <string>
+#include <iomanip>
+#include <sstream>
+
+class Product{
+    private:
+    std::string productId;
+    std::string productName;
+    double basePrice;
+    static int totalProducts;
+
+    public:
+    Product(std::string productId, std::string productName, double basePrice) : productId(productId) , productName(productName), basePrice(basePrice){
+        totalProducts++ ;
+    }
+    // std::tuple<std::string, std::string, double> getAttributes() const {
+    //     return {productId, productName, basePrice};
+    // } //i was just tying some new thing but i realised it is making redundency across the code so i leave this 
+
+    std::string getProductId()const{
+      return productId;   
+    }
+    std::string getProductName()const{
+        return productName;
+    }
+    double getBasePrice()const{
+        return basePrice;
+    }
+
+    static int getTotalProducts();
+
+    virtual double getFinalPrice() = 0;
+
+    virtual ~Product()  = default;
+};
+class Discountable{
+    public:
+    virtual double applyDiscount(double percentage) = 0;
+    virtual ~Discountable() = default;
+};
+class Taxable{
+    public:
+    virtual double applyTax(double taxRate) = 0;
+    virtual ~Taxable() = default;
+};
+class ElectronicProduct : public Product , public Discountable, public Taxable{
+    private:
+    std::string brand;
+
+    public:
+    ElectronicProduct(std::string productId, std::string productName, double basePrice, std::string brand ) : Product(productId, productName, basePrice), brand(brand){}
+    
+    double getFinalPrice()override{
+
+        return(getBasePrice() + applyTax(0.18));
+        
+    }
+    double applyDiscount(double percentage)override{
+        return (getBasePrice() - (getBasePrice() * percentage / 100));
+    }
+    double applyTax(double taxRate)override{
+        return (getBasePrice() * taxRate);
+    }
+};
+
+int Product::totalProducts = 0;
+int Product::getTotalProducts(){
+    return totalProducts;
+};
+class ClosthingProduct : public Product, public Discountable{
+    private:
+    std::string size;
+
+    public:
+    ClosthingProduct(std::string productId, std::string productName, std::string size, double basePrice) : Product(productId, productName, basePrice) , size(size){};
+
+    double getFinalPrice()override{
+        return (getBasePrice() - applyDiscount(10));
+    }
+    double applyDiscount(double percentage)override{
+        return (getBasePrice() * percentage / 100);
+    }
+};
+class Order{
+    private:
+    std::string orderId;
+    Product* item;
+    static int totalOrders;
+
+    public:
+    Order(std::string orderId, Product* item) : orderId(orderId), item(item) {
+        totalOrders++;
+    }
+
+    std::string getOrderSummary()const{
+        std::ostringstream tempPrice;
+
+        tempPrice << std::fixed << std::setprecision(2) << item->getFinalPrice();
+
+        return ("Order ID: " + orderId + "\n"
+        + "Product name: " + item->getProductName() + "\n" 
+        + "Final price: " + tempPrice.str() + "\n");
+    }
+    static int getTotalOrder();
+
+    ~Order() = default;
+};
+
+int Order::totalOrders = 0;
+int Order::getTotalOrder(){
+    return totalOrders;
+};
+
+int main(){
+
+    ElectronicProduct mobile("A2-4C781", "Iphone", 95000, "Apple");
+    ClosthingProduct  appreal("A3-5A7", "Jeans", "Large", 2100);
+
+    Order piece("20-AC354845G12", &mobile);
+    Order piece2("20-BC549545R32", &appreal);
+
+    std::cout << piece.getOrderSummary() << std::endl;
+    std::cout << piece2.getOrderSummary() << std::endl;
+
+    std::cout<< "Total Products: " << Product::getTotalProducts() << std::endl;
+    std::cout<< "Total Orders: " << Order::getTotalOrder() << std::endl;
+    return 0;
+}
