@@ -1,60 +1,69 @@
 #include <iostream>
 #include <string>
+#include <fstream>
+#include <iomanip>
+#include <vector>
 
-class AppConfig{
-    private:
-    static AppConfig* instance;
-    std::string appName;
-    std::string version;
-    static int instanceCount;
-    
-    AppConfig(std::string appName, std::string version){
-        this->appName = appName;
-        this->version = version;
-        instanceCount++;
-    }
-    public:
-    static AppConfig* getInstance(std::string appName, std::string version){
-        if(instance == nullptr){
-            instance = new AppConfig(appName , version);
+int main()
+{
+
+    std::vector<std::vector<int>> matrix;
+
+    for (int i = 0; i < 3; i++)
+    {
+        std::vector<int> tempVec;
+        for (int j = 0; j < 3; j++)
+        {
+            int userInput;
+            std::cout << "Please Enter number: ";
+            std::cin >> userInput;
+
+            tempVec.push_back(userInput);
         }
-        return instance;
+        matrix.push_back(tempVec);
     }
-    static int getInstanceCount();
 
-    std::string getAppName(){
-        return appName;
+    std::ofstream file;
+
+    file.open("number.txt");
+
+    if(!file.is_open()){
+        std::cout<< "file not found." <<std::endl;
+        return 1;
     }
-    std::string getVersion(){
-        return version;
+
+    for (auto &row : matrix)
+    {
+        for (auto &col : row)
+        {
+            file << col << " ";
+        }
+        std::cout << std::endl;
     }
-};
 
-AppConfig* AppConfig::instance = nullptr;
-int AppConfig::instanceCount = 0;
+    file.close();
 
-int AppConfig::getInstanceCount(){
-    return instanceCount;
-};
+    std::ifstream open_file;
+    open_file.open("number.txt");
 
-int main(){
+    if(!open_file.is_open()){
+        std::cout<< "file not found." <<std::endl;
+        return 1;
+    }
 
-    AppConfig* app = AppConfig::getInstance("Whatapp", "2.01");
+    int num;
+    int sum = 0;
+    double avg = 0;
+    int count = 0;
 
-    std::cout<< app->getInstanceCount() <<std::endl;
+    while(open_file >> num ){
+        sum += num;
+        count++;
+    }
 
-    AppConfig* app1 = AppConfig::getInstance("Whatapp", "2.01");
-
-    std::cout<< app->getInstanceCount() <<std::endl;
-
-    AppConfig* app2 = AppConfig::getInstance("Whatapp", "2.01");
-
-    std::cout<< app->getInstanceCount() <<std::endl;
-
-    std::cout<< app->getAppName() << std::endl;
-    std::cout<< app->getVersion() << std::endl;
-
+    avg = sum / count;
+    std::cout << sum << std::endl;
+    std::cout << avg << std::endl;
 
     return 0;
-    
 }
