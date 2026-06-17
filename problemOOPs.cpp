@@ -1,69 +1,49 @@
 #include <iostream>
 #include <string>
-#include <fstream>
-#include <iomanip>
 #include <vector>
 
-int main()
-{
+class Playlist{
+    private:
+    std::string playlist;
+    std::vector<std::string> songName;
 
-    std::vector<std::vector<int>> matrix;
+    public:
+    Playlist(std::string playlist) : playlist(playlist){}
 
-    for (int i = 0; i < 3; i++)
-    {
-        std::vector<int> tempVec;
-        for (int j = 0; j < 3; j++)
-        {
-            int userInput;
-            std::cout << "Please Enter number: ";
-            std::cin >> userInput;
-
-            tempVec.push_back(userInput);
+    void addSong(std::string songname){
+        songName.push_back(songname);
+    }
+    void removeSong(std::string songname){
+        for(auto name: songName){
+            if(name == songname ){
+                name.erase();
+                break;
+            }
         }
-        matrix.push_back(tempVec);
     }
-
-    std::ofstream file;
-
-    file.open("number.txt");
-
-    if(!file.is_open()){
-        std::cout<< "file not found." <<std::endl;
-        return 1;
+    std::string getPlaylistName(){
+        return playlist;
     }
-
-    for (auto &row : matrix)
-    {
-        for (auto &col : row)
-        {
-            file << col << " ";
+    std::string getAllSongs(){
+        std::string allSongs = songName.front();
+        for(auto songs : songName){
+            allSongs += "," + songs;
         }
-        std::cout << std::endl;
+        return allSongs;
     }
+    
+};
 
-    file.close();
+int main(){
 
-    std::ifstream open_file;
-    open_file.open("number.txt");
+    Playlist music("My Playlist");
 
-    if(!open_file.is_open()){
-        std::cout<< "file not found." <<std::endl;
-        return 1;
-    }
+    music.addSong("Faded");
+    music.addSong("You belong with me");
+    music.addSong("sapphire");
 
-    int num;
-    int sum = 0;
-    double avg = 0;
-    int count = 0;
+    music.removeSong("Faded");
 
-    while(open_file >> num ){
-        sum += num;
-        count++;
-    }
-
-    avg = sum / count;
-    std::cout << sum << std::endl;
-    std::cout << avg << std::endl;
-
+    std::cout << music.getAllSongs() << std::endl;
     return 0;
 }
