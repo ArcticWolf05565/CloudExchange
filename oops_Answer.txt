@@ -528,3 +528,99 @@ int main(){
 
     return 0;
 }
+----------------------------------------
+Answer 3
+
+#include <iostream>
+#include <string>
+#include <vector>
+
+class LibraryItem{
+    private:
+    std::string itemId;
+    std::string title;
+
+    public:
+    LibraryItem(std::string itemId, std::string title) : itemId(itemId) , title(title){}
+
+    std::string getItemId(){
+        return itemId;
+    }
+    std::string getTitle(){
+        return title;
+    }
+     virtual std::string getItemInfo(){
+        return "ID: " + itemId + " " + "Title: " + " " + title + "\n";
+     };
+     virtual ~LibraryItem() = default;
+};
+
+class  Book : public LibraryItem{
+    private:
+    std::string author;
+
+    public:
+    Book(std::string itemId , std::string title , std::string author): LibraryItem(itemId, title), author(author){}
+
+    std::string getItemInfo()override{
+        return "ID: " + LibraryItem::getItemId() + " " + "Title: " + LibraryItem::getTitle()  + " "+ "Author: " + author + "\n";
+    }
+};
+class Magazine : public LibraryItem{
+    private:
+    int issueNumber;
+
+    public:
+    Magazine(std::string itemId , std::string title, int issueNumber): LibraryItem(itemId, title), issueNumber(issueNumber){}
+
+     std::string getItemInfo()override{
+        return "ID: " + LibraryItem::getItemId() + " " + "Title: " + LibraryItem::getTitle()  + " "+ "Issue Number: " + std::to_string(issueNumber) + "\n";
+    }
+};
+class Library{
+    private:
+    std::string libraryName;
+    std::vector<LibraryItem*> lib;
+
+    public:
+    Library(std::string libraryName) : libraryName(libraryName){}
+
+    void addItem(LibraryItem* item){
+        lib.push_back(item);
+    }
+    std::vector<LibraryItem*> getAllItems(){
+        return lib;
+    }
+};
+
+int main(){
+
+   Book* copy = new Book("1234", "Heart Broker", "James Webl");
+   Book* copy1 = new Book("5678", "Alone Beauty", "Carl Benz");
+
+   Magazine* mag = new Magazine("1122", "Job respect", 501);
+
+   Library lib_out("Stanford Library");
+
+   lib_out.addItem(copy);
+   lib_out.addItem(copy1);
+   lib_out.addItem(mag);
+
+   std::vector<LibraryItem*> allItems = lib_out.getAllItems();
+
+   for(const auto& item: allItems){
+    std::cout << item->getItemInfo();
+   }
+
+
+   delete copy;
+   delete copy1;
+   delete mag;
+
+   for(auto ptr: allItems){
+    delete ptr;
+   }
+    
+    return 0;
+
+}
