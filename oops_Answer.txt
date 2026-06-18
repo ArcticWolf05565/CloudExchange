@@ -412,3 +412,119 @@ int main(){
     std::cout<< "Total Orders: " << Order::getTotalOrder() << std::endl;
     return 0;
 }
+Sheet no 4 #################################
+
+Answer 1
+--------------------------------
+
+#include <iostream>
+#include <string>
+#include <vector>
+
+class Playlist{
+    private:
+    std::string playlist;
+    std::vector<std::string> songName;
+
+    public:
+    Playlist(std::string playlist) : playlist(playlist){}
+
+    void addSong(std::string songname){
+        songName.push_back(songname);
+    }
+    void removeSong(std::string songname){
+        for(auto it = songName.begin() ; it != songName.end() ; ++it){
+            if(*it == songname){
+                songName.erase(it);
+                break;
+            }
+        }
+    }
+    std::string getPlaylistName(){
+        return playlist;
+    }
+    std::string getAllSongs(){
+       
+        std::string allSongs;
+        for(size_t i = 0; i < songName.size() ; ++i){
+            allSongs += songName[i];
+
+            if(i < songName.size() -1){
+                allSongs += "," ;
+            }
+        }
+        return allSongs;
+    }
+    
+};
+
+int main(){
+
+    Playlist music("My Playlist");
+
+    music.addSong("Faded");
+    music.addSong("You belong with me");
+    music.addSong("sapphire");
+
+    music.removeSong("Faded");
+
+    std::cout << music.getAllSongs() << std::endl;
+    return 0;
+}
+----------------------------------------
+Answer 2
+
+
+#include <iostream>
+#include <string>
+#include <stack>
+
+class BrowserHistory{
+    private:
+    std::string browserName;
+    std::stack<std::string> history;
+
+    public:
+    BrowserHistory(std::string browserName) : browserName(browserName){}
+
+    void visitPage(std::string url){
+        history.push(url);
+    }
+
+    std::string goBack(){
+        std::string url;
+        if(!history.empty()){
+            url = history.top();
+            history.pop();
+            return url;
+        }else{
+            return "No history found.\n";
+        }
+    }
+
+    std::string getBrowserName(){
+        return browserName;
+    }
+    int getHistorySize(){
+        return history.size();
+    }
+
+};
+
+int main(){
+
+    BrowserHistory surfing("Chrome");
+
+    std::cout<< "Browser name: " << surfing.getBrowserName() << "\n";
+    surfing.visitPage("google.com");
+    surfing.visitPage("Flipkart.in");
+    surfing.visitPage("moi.org");
+
+    std::cout<< "Browser history size: " << surfing.getHistorySize() << "\n";
+    std::cout<< surfing.goBack() << "\n";
+    std::cout<< "Browser history size: " << surfing.getHistorySize() << "\n";
+    std::cout<< surfing.goBack() << "\n";
+    std::cout<< "Browser history size: " << surfing.getHistorySize() << "\n";
+
+    return 0;
+}
