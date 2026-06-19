@@ -624,3 +624,103 @@ int main(){
     return 0;
 
 }
+----------------------------------------
+Answer 4
+
+#include <iostream>
+#include <string>
+#include <queue>
+#include <vector>
+
+class SupportTicket{
+    private :
+    std::string ticketID;
+    std::string customerName;
+    std::string issueDescription;
+
+    public:
+    SupportTicket(std::string ticketID, std::string customerName, std::string issueDescription) : ticketID(ticketID) , customerName(customerName) , issueDescription(issueDescription){}
+
+    std::string getTicketID(){
+        return ticketID;
+    }
+    std::string getCustomerName(){
+        return customerName;
+    }
+    std::string getIssueDescription(){
+        return issueDescription;
+    }
+
+    virtual std::string getPriority() = 0;
+
+    std::string getTicketSummary(){
+        return ("Ticket: " + ticketID + " Customer name: " + customerName + " Issue Description: "  + issueDescription + getPriority());
+    }
+    virtual ~SupportTicket() = default; 
+};
+class UrgentTicket : public SupportTicket{
+    public:
+
+    UrgentTicket(std::string ticketID, std::string customerName, std::string issueDescription) : SupportTicket(ticketID, customerName, issueDescription){}
+
+    std::string getPriority()override{
+        return " | Priority: HIGH";
+    }
+};
+class NormalTicket : public SupportTicket{
+    public:
+    std::string getPriority()override{
+        return " | Priority: LOW";
+    }
+     NormalTicket(std::string ticketID, std::string customerName, std::string issueDescription) : SupportTicket(ticketID, customerName, issueDescription){}
+};
+class TicketQueue{
+    private:
+    std::queue<SupportTicket*> tkt;
+
+    public:
+
+    void addTicket(SupportTicket* ticket){
+        tkt.push(ticket);
+    }
+    int getQueueSize(){
+        return tkt.size();
+    }
+    SupportTicket* processNextTicket(){
+        SupportTicket* ptrTkt = nullptr;
+        if(!tkt.empty()){
+            ptrTkt = tkt.front();
+            tkt.pop();
+            return ptrTkt;
+        }else{
+            return ptrTkt;
+        }
+  
+    }
+
+};
+
+int main(){
+
+  TicketQueue qtkt;
+
+  UrgentTicket* utkt = new UrgentTicket("A23CG89", "Furkan", "Fazil");
+  UrgentTicket* utkt1 = new UrgentTicket("B34GD74", "Riya", "Rahul");
+  
+  NormalTicket* ntkt = new NormalTicket("J23CG65", "Fiyaz", "Fazil" );
+NormalTicket* ntkt1 = new NormalTicket("L34GD42", "Sekhar", "Rahul");
+  
+  qtkt.addTicket(utkt);
+  qtkt.addTicket(utkt1);
+  qtkt.addTicket(ntkt);
+  qtkt.addTicket(ntkt1);
+
+    while(qtkt.getQueueSize() > 0){
+        SupportTicket* currentPtr = qtkt.processNextTicket();
+        std:: cout<< "Ticket Summary: " << currentPtr->getTicketSummary() << "\n";
+
+        delete currentPtr;
+    }
+
+    return 0;
+}
