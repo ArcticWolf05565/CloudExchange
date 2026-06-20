@@ -412,3 +412,315 @@ int main(){
     std::cout<< "Total Orders: " << Order::getTotalOrder() << std::endl;
     return 0;
 }
+Sheet no 4 #################################
+
+Answer 1
+--------------------------------
+
+#include <iostream>
+#include <string>
+#include <vector>
+
+class Playlist{
+    private:
+    std::string playlist;
+    std::vector<std::string> songName;
+
+    public:
+    Playlist(std::string playlist) : playlist(playlist){}
+
+    void addSong(std::string songname){
+        songName.push_back(songname);
+    }
+    void removeSong(std::string songname){
+        for(auto it = songName.begin() ; it != songName.end() ; ++it){
+            if(*it == songname){
+                songName.erase(it);
+                break;
+            }
+        }
+    }
+    std::string getPlaylistName(){
+        return playlist;
+    }
+    std::string getAllSongs(){
+       
+        std::string allSongs;
+        for(size_t i = 0; i < songName.size() ; ++i){
+            allSongs += songName[i];
+
+            if(i < songName.size() -1){
+                allSongs += "," ;
+            }
+        }
+        return allSongs;
+    }
+    
+};
+
+int main(){
+
+    Playlist music("My Playlist");
+
+    music.addSong("Faded");
+    music.addSong("You belong with me");
+    music.addSong("sapphire");
+
+    music.removeSong("Faded");
+
+    std::cout << music.getAllSongs() << std::endl;
+    return 0;
+}
+----------------------------------------
+Answer 2
+
+
+#include <iostream>
+#include <string>
+#include <stack>
+
+class BrowserHistory{
+    private:
+    std::string browserName;
+    std::stack<std::string> history;
+
+    public:
+    BrowserHistory(std::string browserName) : browserName(browserName){}
+
+    void visitPage(std::string url){
+        history.push(url);
+    }
+
+    std::string goBack(){
+        std::string url;
+        if(!history.empty()){
+            url = history.top();
+            history.pop();
+            return url;
+        }else{
+            return "No history found.\n";
+        }
+    }
+
+    std::string getBrowserName(){
+        return browserName;
+    }
+    int getHistorySize(){
+        return history.size();
+    }
+
+};
+
+int main(){
+
+    BrowserHistory surfing("Chrome");
+
+    std::cout<< "Browser name: " << surfing.getBrowserName() << "\n";
+    surfing.visitPage("google.com");
+    surfing.visitPage("Flipkart.in");
+    surfing.visitPage("moi.org");
+
+    std::cout<< "Browser history size: " << surfing.getHistorySize() << "\n";
+    std::cout<< surfing.goBack() << "\n";
+    std::cout<< "Browser history size: " << surfing.getHistorySize() << "\n";
+    std::cout<< surfing.goBack() << "\n";
+    std::cout<< "Browser history size: " << surfing.getHistorySize() << "\n";
+
+    return 0;
+}
+----------------------------------------
+Answer 3
+
+#include <iostream>
+#include <string>
+#include <vector>
+
+class LibraryItem{
+    private:
+    std::string itemId;
+    std::string title;
+
+    public:
+    LibraryItem(std::string itemId, std::string title) : itemId(itemId) , title(title){}
+
+    std::string getItemId(){
+        return itemId;
+    }
+    std::string getTitle(){
+        return title;
+    }
+     virtual std::string getItemInfo(){
+        return "ID: " + itemId + " " + "Title: " + " " + title + "\n";
+     };
+     virtual ~LibraryItem() = default;
+};
+
+class  Book : public LibraryItem{
+    private:
+    std::string author;
+
+    public:
+    Book(std::string itemId , std::string title , std::string author): LibraryItem(itemId, title), author(author){}
+
+    std::string getItemInfo()override{
+        return "ID: " + LibraryItem::getItemId() + " " + "Title: " + LibraryItem::getTitle()  + " "+ "Author: " + author + "\n";
+    }
+};
+class Magazine : public LibraryItem{
+    private:
+    int issueNumber;
+
+    public:
+    Magazine(std::string itemId , std::string title, int issueNumber): LibraryItem(itemId, title), issueNumber(issueNumber){}
+
+     std::string getItemInfo()override{
+        return "ID: " + LibraryItem::getItemId() + " " + "Title: " + LibraryItem::getTitle()  + " "+ "Issue Number: " + std::to_string(issueNumber) + "\n";
+    }
+};
+class Library{
+    private:
+    std::string libraryName;
+    std::vector<LibraryItem*> lib;
+
+    public:
+    Library(std::string libraryName) : libraryName(libraryName){}
+
+    void addItem(LibraryItem* item){
+        lib.push_back(item);
+    }
+    std::vector<LibraryItem*> getAllItems(){
+        return lib;
+    }
+};
+
+int main(){
+
+   Book* copy = new Book("1234", "Heart Broker", "James Webl");
+   Book* copy1 = new Book("5678", "Alone Beauty", "Carl Benz");
+
+   Magazine* mag = new Magazine("1122", "Job respect", 501);
+
+   Library lib_out("Stanford Library");
+
+   lib_out.addItem(copy);
+   lib_out.addItem(copy1);
+   lib_out.addItem(mag);
+
+   std::vector<LibraryItem*> allItems = lib_out.getAllItems();
+
+   for(const auto& item: allItems){
+    std::cout << item->getItemInfo();
+   }
+
+
+   delete copy;
+   delete copy1;
+   delete mag;
+
+   for(auto ptr: allItems){
+    delete ptr;
+   }
+    
+    return 0;
+
+}
+----------------------------------------
+Answer 4
+
+#include <iostream>
+#include <string>
+#include <queue>
+#include <vector>
+
+class SupportTicket{
+    private :
+    std::string ticketID;
+    std::string customerName;
+    std::string issueDescription;
+
+    public:
+    SupportTicket(std::string ticketID, std::string customerName, std::string issueDescription) : ticketID(ticketID) , customerName(customerName) , issueDescription(issueDescription){}
+
+    std::string getTicketID(){
+        return ticketID;
+    }
+    std::string getCustomerName(){
+        return customerName;
+    }
+    std::string getIssueDescription(){
+        return issueDescription;
+    }
+
+    virtual std::string getPriority() = 0;
+
+    std::string getTicketSummary(){
+        return ("Ticket: " + ticketID + " Customer name: " + customerName + " Issue Description: "  + issueDescription + getPriority());
+    }
+    virtual ~SupportTicket() = default; 
+};
+class UrgentTicket : public SupportTicket{
+    public:
+
+    UrgentTicket(std::string ticketID, std::string customerName, std::string issueDescription) : SupportTicket(ticketID, customerName, issueDescription){}
+
+    std::string getPriority()override{
+        return " | Priority: HIGH";
+    }
+};
+class NormalTicket : public SupportTicket{
+    public:
+    std::string getPriority()override{
+        return " | Priority: LOW";
+    }
+     NormalTicket(std::string ticketID, std::string customerName, std::string issueDescription) : SupportTicket(ticketID, customerName, issueDescription){}
+};
+class TicketQueue{
+    private:
+    std::queue<SupportTicket*> tkt;
+
+    public:
+
+    void addTicket(SupportTicket* ticket){
+        tkt.push(ticket);
+    }
+    int getQueueSize(){
+        return tkt.size();
+    }
+    SupportTicket* processNextTicket(){
+        SupportTicket* ptrTkt = nullptr;
+        if(!tkt.empty()){
+            ptrTkt = tkt.front();
+            tkt.pop();
+            return ptrTkt;
+        }else{
+            return ptrTkt;
+        }
+  
+    }
+
+};
+
+int main(){
+
+  TicketQueue qtkt;
+
+  UrgentTicket* utkt = new UrgentTicket("A23CG89", "Furkan", "Fazil");
+  UrgentTicket* utkt1 = new UrgentTicket("B34GD74", "Riya", "Rahul");
+  
+  NormalTicket* ntkt = new NormalTicket("J23CG65", "Fiyaz", "Fazil" );
+NormalTicket* ntkt1 = new NormalTicket("L34GD42", "Sekhar", "Rahul");
+  
+  qtkt.addTicket(utkt);
+  qtkt.addTicket(utkt1);
+  qtkt.addTicket(ntkt);
+  qtkt.addTicket(ntkt1);
+
+    while(qtkt.getQueueSize() > 0){
+        SupportTicket* currentPtr = qtkt.processNextTicket();
+        std:: cout<< "Ticket Summary: " << currentPtr->getTicketSummary() << "\n";
+
+        delete currentPtr;
+    }
+
+    return 0;
+}
