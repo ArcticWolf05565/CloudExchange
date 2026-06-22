@@ -825,3 +825,125 @@ int main(){
 
     return 0;
 }
+
+----------------------------------------
+Answer 6
+
+#include <iostream>
+#include <string>
+#include <vector>
+
+class Animal
+{
+private:
+    std::string animalName;
+    std::string animalId;
+    int age;
+
+public:
+    Animal(std::string animalId, std::string animalName, int age) : animalId(animalId), animalName(animalName), age(age) {}
+
+    std::string getanimalName()
+    {
+        return animalName;
+    }
+    std::string getAnimalId()
+    {
+        return animalId;
+    }
+    int getAge()
+    {
+        return age;
+    }
+    virtual std::string getFeedingSchedule()
+    {
+        return ("Generic feeding schedule for " + animalName);
+    }
+
+    virtual ~Animal() = default;
+};
+class Lion : public Animal
+{
+private:
+    std::string preyType;
+
+public:
+    Lion(std::string animalId, std::string animalName, int age, std::string preyType) : Animal(animalId, animalName, age), preyType(preyType) {}
+
+    std::string getFeedingSchedule() override
+    {
+        return Animal::getFeedingSchedule() + " Pray Type: " + preyType;
+    }
+};
+class Elephant : public Animal
+{
+private:
+    int dailyFoodKg;
+
+public:
+    Elephant(std::string animalId, std::string animalName, int age, int dailyFoodKg) : Animal(animalId, animalName, age), dailyFoodKg(dailyFoodKg) {}
+
+    std::string getFeedingSchedule() override
+    {
+        return Animal::getFeedingSchedule() + " Daily Weight: " + std::to_string(dailyFoodKg);
+    }
+};
+class Parrot : public Animal
+{
+private:
+    std::string favoriteFruit;
+
+public:
+    Parrot(std::string animalId, std::string animalName, int age, std::string favoriteFruit) : Animal(animalId, animalName, age), favoriteFruit(favoriteFruit) {}
+
+    std::string getFeedingSchedule() override
+    {
+        return Animal::getFeedingSchedule() + " Favorite Fruit: " + favoriteFruit;
+    }
+};
+class Zoo
+{
+private:
+    std::string zooName;
+    std::vector<Animal *> being;
+
+public:
+    Zoo(std::string zooName) : zooName(zooName){}
+
+    void addAnimal(Animal *userObj)
+    {
+        being.push_back(userObj);
+    }
+    std::string getFeedingReport()
+    {
+        std::string report = "---Zoo: " + zooName + " "+ "Feeding Report---\n";
+
+        for (const auto &rpt : being)
+        {
+            report += rpt->getFeedingSchedule() + "\n";
+        }
+        return report;
+    }
+};
+
+int main()
+{
+
+    Lion *l1 = new Lion("7684", "Lion", 45, "Wild");
+    Elephant *e1 = new Elephant("9234", "Elephant", 84, 20);
+    Parrot *p1 = new Parrot("0345", "Parrot", 2, "Domestic");
+
+    Zoo z("Alipur zoo");
+
+    z.addAnimal(l1);
+    z.addAnimal(e1);
+    z.addAnimal(p1);
+
+    std::cout << z.getFeedingReport();
+
+    delete l1;
+    delete p1;
+    delete e1;
+
+    return 0;
+}
