@@ -947,3 +947,111 @@ int main()
 
     return 0;
 }
+----------------------------------------
+Answer 6
+
+
+#include <iostream>
+#include <string>
+#include <vector>
+#include <sstream>
+#include <iomanip>
+
+class MenuItem{
+    private:
+    std::string itemName;
+    double price;
+
+    static int totalMenuItem ;
+
+    public:
+    MenuItem(std::string itemName, double price) : itemName(itemName) , price(price){
+        totalMenuItem++;
+    }
+
+    static int getTotalMenuItem();
+
+    std::string getItemName(){
+        return itemName;
+    }
+    double getPrice(){
+        return price;
+    }
+
+};
+
+int MenuItem::totalMenuItem = 0;
+
+int MenuItem::getTotalMenuItem(){
+    return totalMenuItem;
+};
+class Order{
+    private:
+    std::string orderId;
+    std::string customerName;
+    std::vector<MenuItem*> item;
+
+    static int totalOrder;
+
+    public:
+    Order(std::string orderId, std::string customerName) : orderId(orderId), customerName(customerName){
+        totalOrder++;
+    }
+
+    static int getTotalOrder();
+
+    void addItem(MenuItem* menu){
+        item.push_back(menu);
+    }
+    double getOrderTotal(){
+        double totalPrice = 0;
+        for(const auto & price: item){
+            totalPrice += price->getPrice();
+        }
+        return totalPrice;
+    }
+    std::string getOrderSummary(){
+        std::string totalSummary = "----- Order Summary -----\n";
+        std::ostringstream tempAmount;
+        tempAmount << std::fixed << std::setprecision(2) << getOrderTotal();
+
+            totalSummary += "Order: " + orderId  + "\n" + "Customer name: " + customerName + "| Total amount: " + tempAmount.str() + "\n"; 
+
+        return totalSummary;
+    }
+
+};
+int Order::totalOrder = 0;
+
+int Order::getTotalOrder(){
+    return totalOrder;
+}
+
+int main(){
+
+    MenuItem* item1 = new MenuItem("Dark Coffee", 14.49);
+    MenuItem* item2 = new MenuItem("Matcha" , 24.59);
+    MenuItem* item3 = new MenuItem("Doughnut", 20.00);
+
+
+    Order order1("87564", "Mohd Faisal");
+    Order order2("98345", "Furkan");
+
+    order1.addItem(item1);
+    order1.addItem(item3);
+    order2.addItem(item2);
+    order2.addItem(item3);
+
+
+    std::cout<< order1.getOrderSummary();   
+    std::cout<< order2.getOrderSummary();
+
+    // std::cout<< Order::getTotalOrder();
+    // std::cout<< MenuItem::getTotalMenuItem();
+
+    delete item1;
+    delete item2;
+    delete item3;
+
+    return 0;
+}
