@@ -948,7 +948,11 @@ int main()
     return 0;
 }
 ----------------------------------------
+<<<<<<< Updated upstream
 Answer 7 
+=======
+Answer 7
+>>>>>>> Stashed changes
 
 
 #include <iostream>
@@ -1191,6 +1195,186 @@ int main(){
     std::cout<< feed->getFeedSummary() << std::endl;
 
     delete feed;
+
+    return 0;
+}
+
+----------------------------------------
+Answer 10
+
+#include <iostream>
+#include <string>
+#include <vector>
+
+class Person{
+    private:
+    std::string personId;
+    std::string name;
+    int age;
+
+    public:
+    Person(std::string personId, std::string name, int age) : personId(personId) , name(name) , age(age) {}
+
+    std::string getPersonId()const{return personId;}
+    std::string getName()const{return name;}
+    int getAge()const{return age;}
+
+    virtual std::string getRole() = 0;
+    virtual ~Person() = default;
+
+};
+class Schedulable {
+    public:
+    virtual std::string addappointment(std::string appointment) = 0; //left
+    virtual std::vector<std::string> getAppointments() = 0; //left
+
+    virtual ~Schedulable()  = default;
+};
+class Doctor : public Person, public Schedulable{
+    private:
+    std::string specialization;
+    std::vector<std::string> storeAppointment;
+
+    public:
+
+    Doctor(std::string personId, std::string name, int age, std::string specialization) : Person(personId, name , age) , specialization(specialization) {}
+    
+    std::string addappointment(std::string appointment)override{
+        storeAppointment.push_back(appointment);
+        return "Appointment added: " + appointment ; 
+    } 
+    
+    std::vector<std::string> getAppointments()override{
+        return storeAppointment;
+    } 
+
+    std::string getSpecialization()const{return specialization;}
+
+    std::string getRole()override{return "Doctor";}
+
+    virtual ~Doctor() = default;
+};
+class Patient : public Person{
+    private:
+    std::string diagnosis;
+    std::vector<std::string> medHistory;
+
+    public:
+    Patient(std::string personId, std::string name, int age, std::string diagnosis) : Person(personId, name, age) , diagnosis(diagnosis){}
+
+    std::string getRole()override{return "Patient";}
+
+    std::string getDiagnosis()const{return diagnosis;}
+
+    void addMedicalHistory(std::string entry){
+        medHistory.push_back(entry);
+    } 
+
+    std::vector<std::string> getMedicalHistory(){
+        return medHistory;
+    } 
+
+    virtual ~Patient() = default;
+
+};
+class Appointment{
+    private:
+    std::string appointmentId;
+    std::string date;
+    Doctor* doc;
+    Patient* sickMen;
+
+    public:
+    Appointment(std::string appointmentId, std::string date, Doctor* doc, Patient* sickMen) : appointmentId(appointmentId) , date(date) , doc(doc) , sickMen(sickMen) {} 
+
+    std::string getAppointmentDetails()const{
+        std::string aptDetail = "\n--- Appointment Detail ---\n";
+
+        aptDetail += "Appointment ID: " + appointmentId + "\n"
+                    + "Date: " + date + "\n" 
+                    + "Doctor: " + doc->getName() + "\n"
+                    + "Specialization: " + doc->getSpecialization()  + "\n"
+                    + "Patient name: " + sickMen->getName() + "\n" + "Diagnosis: " + sickMen->getDiagnosis() + "\n";
+
+                    return aptDetail;
+    } 
+
+};
+class Hospital{
+    private:
+    std::string hospitalName;
+    std::vector<Doctor*> vDoc;
+    std::vector<Patient*> vPtnt;
+    std::vector<Appointment*> vAppointment;
+
+    public:
+
+    Hospital(std::string hospitalName) : hospitalName(hospitalName) {}
+
+    void addDoctor(Doctor* d){
+        vDoc.push_back(d);
+    }
+    void addPatient(Patient* p){
+        vPtnt.push_back(p);
+    } 
+    void addAppointment(Appointment* a){
+        vAppointment.push_back(a);
+    } 
+
+    std::string getHospitalReport(){
+        std::string hospitalReport = "---- " + hospitalName + " ----\n\n";
+
+        hospitalReport += "---- All Doctor Information ----\n";
+
+        for(const auto& dPtr: vDoc){
+            hospitalReport += "Doctor ID: " + dPtr->getPersonId() + " | Name: " + dPtr->getName() + " | Age: " + std::to_string(dPtr->getAge()) + " | Specialization: " + dPtr->getSpecialization() + "\n";
+        }
+        hospitalReport += "\n---- All Patient Information ----\n";
+
+        for(const auto& pPtr: vPtnt){
+            hospitalReport += "Patient ID: " + pPtr->getPersonId() + " | Name: " + pPtr->getName() + " | Age: " + std::to_string(pPtr->getAge()) + " | Diagnosis: " + pPtr->getDiagnosis() + "\n" ;
+        }
+
+        for(const auto& aPtr: vAppointment){
+            hospitalReport += aPtr->getAppointmentDetails() + "\n";
+
+        }
+        return hospitalReport;
+    }
+};
+
+int main() {
+    
+    Hospital* hspt = new Hospital("Regency Hospital");
+
+    Doctor* doc1 = new Doctor("A43G65","Faisal Shah", 43, "Heart" );
+    Doctor* doc2 = new Doctor("B83H92", "Amna Khan", 32, "Lungs");
+
+    Patient* pat1 = new Patient("K23M93", "Rashmi Tivari", 23, "Lungs");
+    Patient* pat2 = new Patient("I53T64", "Aman Srivastav", 43, "Heart");
+
+    Appointment* apt1 = new Appointment("W43H3", "23-June-2026", doc1, pat2);
+    Appointment* apt2 = new Appointment("I83549", "23-July-2026", doc2, pat1);
+
+    doc1->addappointment("3:00 pm");
+    doc2->addappointment("9:00 pm");
+
+    hspt->addDoctor(doc1);
+    hspt->addDoctor(doc2);
+    hspt->addPatient(pat1);
+    hspt->addPatient(pat2);
+    hspt->addAppointment(apt1);
+    hspt->addAppointment(apt2);
+
+    std::cout<< hspt->getHospitalReport() << std::endl;
+
+    delete hspt;
+    delete doc1;
+    delete doc2;
+    delete pat1;
+    delete pat2;
+    delete apt1;
+    delete apt2;
 
     return 0;
 }
