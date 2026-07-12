@@ -1378,3 +1378,167 @@ int main() {
 
     return 0;
 }
+
+-----------------------------------------
+Sheet 5
+Answer 1
+
+#include <iostream>
+#include <string>
+#include <vector>
+#include <sstream>
+
+class Note{
+    private:
+    std::string noteId;
+    std::string title;
+    std::ostringstream noteContent;
+
+    public:
+    Note(std::string noteId, std::string title) : noteId(noteId), title(title) {}
+
+    Note(const Note& other) : noteId(other.noteId), title(other.title) {
+        noteContent << other.noteContent.str();
+    }
+
+    void appendContent(std::string text){
+        noteContent << text;
+    }
+    void clearContent(){
+        noteContent.str("");
+        noteContent.clear();
+    }
+    std::string getContent(){
+        return noteContent.str();   
+    }
+    std::string getNoteId()const{return noteId;}
+    std::string getTitle()const{return title;}
+
+    ~Note() = default;
+};
+class NoteBook{
+    private:
+    std::string ownerName;
+    std::vector<Note> note;
+    
+    public:
+    NoteBook(std::string ownerName) : ownerName(ownerName) {}
+
+    void addNote(const Note& textNote){
+        note.push_back(textNote);
+    }
+    Note* getNoteById(std::string noteId){
+
+        for(auto& ptr: note){
+            if(ptr.getNoteId() == noteId){
+                return &ptr;
+            }
+        }
+        return nullptr;
+    }
+    std::vector<Note>& getAllNote(){
+        return note;
+    }
+
+};
+
+int main(){
+
+    NoteBook notebook("Faisal Khan");
+
+    Note note("234", "English");
+    Note note1("532", "Science");
+    Note note2("983", "Maths");
+
+    notebook.addNote(note);
+    notebook.addNote(note1);
+    notebook.addNote(note2);
+
+    note.appendContent("My name is Faiz khan");
+    note.appendContent(" and i am 24 year old.");
+
+    note1.appendContent("My name is Kali khan");
+    note1.appendContent(" and i am 30 year old.");
+
+    note2.appendContent("My name is riya khan");
+    note2.appendContent(" and i am 43 year old.");
+
+
+    for(auto & ptr: notebook.getAllNote()){
+
+        if(ptr.getNoteId() == "983"){
+            std::cout << "Note found." <<std::endl;
+
+            ptr.clearContent();
+            ptr.appendContent("This is new content.");
+        } 
+    }
+
+    for(auto& ptr: notebook.getAllNote()){
+        std::cout << "Title: " << ptr.getTitle() << " | Notes: " << ptr.getContent() << std::endl;
+
+    }
+
+    return 0;
+}
+
+-----------------------------------------
+Answer 2
+
+#include <iostream>
+#include <string>
+#include <sstream>
+#include <stack>
+
+class CodeEditor{
+    private:
+    std::string filename;
+    std::ostringstream currentCodeContent;
+    std::stack<std::string> preStateSnapshots;
+
+    public:
+    CodeEditor(std::string filename) : filename(filename){
+        currentCodeContent.str("");
+    }
+    void typeCode(std::string code){
+        preStateSnapshots.push(currentCodeContent.str());
+
+        currentCodeContent << code << "\n";
+    }
+    std::string undo(){
+        std::string lastSaved;
+        if(preStateSnapshots.empty()){
+            return "Nothing to undo";
+        }
+
+        lastSaved = preStateSnapshots.top();
+        preStateSnapshots.pop();
+        currentCodeContent.str("");
+        currentCodeContent.clear();
+
+        currentCodeContent << lastSaved;
+        return "undo successful";
+    }
+    std::string getCurrentCode(){return currentCodeContent.str();}
+
+    std::string getFilename(){return filename;}
+
+};
+
+int main(){
+
+    CodeEditor c1("Notepad");
+
+    c1.typeCode("int x = 5;");
+    c1.typeCode("int *ptr = &x");
+    c1.typeCode("std::cout<< ptr << std::endl;");
+
+    std::cout << "\n" << c1.getCurrentCode() << std::endl;
+
+    c1.undo();
+    std::cout << "\n" << c1.getCurrentCode() << std::endl;
+    c1.undo();
+    std::cout << "\n" << c1.getCurrentCode() << std::endl;
+
+    return 0;
+}
