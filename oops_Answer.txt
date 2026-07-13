@@ -1542,3 +1542,108 @@ int main(){
 
     return 0;
 }
+
+-----------------------------------------
+Answer 3
+
+#include <iostream>
+#include <vector>
+#include <string>
+#include <sstream>
+
+class Vehicle{ 
+    private:
+    std::string vehicleId;
+    std::string brand;
+    int year;
+
+    public:
+
+    Vehicle(std::string vehicleId, std::string brand, int year): vehicleId(vehicleId) , brand(brand) , year(year){}
+
+    std::string getVehicleId()const{return vehicleId;}
+    std::string getBrand()const{return brand;}
+    int getYear()const{return year;}
+
+    virtual std::string getVehicleInfo(){
+        return ("Vehicle ID: " + vehicleId + " | Brand: " + brand + " | Year: " + std::to_string(year));
+    }
+
+    virtual ~Vehicle() = default;
+};
+
+class Car : public Vehicle{
+    private:
+    int numberOfDoor;
+
+    public:
+    Car(std::string vehicleId , std::string brand, int year, int numberOfDoor) : Vehicle(vehicleId, brand, year) , numberOfDoor(numberOfDoor){}
+
+    std::string getVehicleInfo()override {
+        return (Vehicle::getVehicleInfo() + " | Door Type: " + std::to_string(numberOfDoor));
+    }
+
+};
+
+class Bike : public Vehicle{
+    private:
+    std::string bikeType;
+
+    public:
+    Bike(std::string vehicleId , std::string brand, int year, std::string bikeType) : Vehicle(vehicleId, brand, year) , bikeType(bikeType){}
+
+    std::string getVehicleInfo()override{
+        return (Vehicle::getVehicleInfo() + " | Bike Type: " + bikeType);
+    }
+};
+
+class RentalAgency{
+    private:
+    std::string agencyName;
+    std::vector<Vehicle*> veh;
+
+    public:
+
+    RentalAgency(std::string agencyName) : agencyName(agencyName){}
+
+    void addVehicle(Vehicle* v){
+        veh.push_back(v);
+    }
+    std::string getRentalCatalog(){
+        std::ostringstream catalog;
+        catalog << "\n------ Catalog ------\n" << "Agency name: " << agencyName << "\n";
+        for(const auto& ptr: veh){
+            catalog << ptr->getVehicleInfo() << "\n";
+        }
+        return catalog.str();
+    }
+    void delPtr(){
+        for(auto ptr: veh){
+            delete ptr;
+        }
+    }
+};
+
+
+int main(){
+
+    RentalAgency r("Faisal Auto Service");
+
+    Car* c1 = new Car("AE432", "Toyota", 2012 , 4);
+    Car* c2 = new Car("AD572", "BMW", 2016, 2);
+
+    Bike* b1 = new Bike("BM983", "Suzuki", 2021, "Sport");
+    Bike* b2 = new Bike("BH324", "Ninja", 2025, "Super-Bike");
+
+    r.addVehicle(c1);
+    r.addVehicle(c2);
+    r.addVehicle(b1);
+    r.addVehicle(b2);
+
+    std::cout << r.getRentalCatalog();
+
+    r.delPtr();
+
+
+    return 0;
+}
