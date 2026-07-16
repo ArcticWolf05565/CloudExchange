@@ -1647,3 +1647,105 @@ int main(){
 
     return 0;
 }
+
+-----------------------------------------
+Answer 3
+
+#include <iostream>
+#include <queue>
+#include <sstream>
+#include <iomanip>
+
+class DeliveryOrder{
+    private:
+    std::string orderID;
+    std::string costumerAddress;
+    double totalAmount;
+
+    public:
+    DeliveryOrder(std::string orderID, std::string costumerAddress, double totalAmount) : orderID(orderID), costumerAddress(costumerAddress), totalAmount(totalAmount){}
+
+    std::string getOrderID()const{return orderID;}
+    std::string getCostumerAddress()const{return costumerAddress;};
+    double getTotalAmount()const{return totalAmount;}
+
+    virtual std::string getDeliveryType() = 0;
+
+    virtual std::string getOrderSummary(){
+        std::stringstream summary;
+        summary << "\n-------- Order Summary --------\n";
+        summary <<"Order ID: " <<std::setw(15) << std::left << orderID << "Costumer Address: " << std::setw(25) << std::left << costumerAddress << "Total Amount: " << std::setw(15) << std::left << std::setprecision(2) << std::fixed << totalAmount << "Delivery Type: " << getDeliveryType() << "\n---- End of Reciept ----\n";
+
+        return summary.str();
+    }
+
+    virtual ~DeliveryOrder() = default;
+};
+class ExpressDelivery : public DeliveryOrder{
+    public:
+    ExpressDelivery(std::string orderID, std::string costumerAddress, double totalAmount) : DeliveryOrder(orderID, costumerAddress, totalAmount){}
+
+    std::string getDeliveryType()override{return "EXPRESS";}
+
+    
+};
+class StandardDelivery : public DeliveryOrder{
+    public:
+    StandardDelivery(std::string orderID, std::string costumerAddress, double totalAmount) : DeliveryOrder(orderID, costumerAddress, totalAmount){}
+
+    std::string getDeliveryType()override{return "STANDARD";}
+
+    
+};
+class DeliveryQueue{
+    private:
+    std::queue<DeliveryOrder*> orders;
+
+    public:
+
+    void placeOrder(DeliveryOrder* obj){
+        orders.push(obj);
+    }
+    DeliveryOrder* dispatchNext(){
+        if(!orders.empty()){
+            DeliveryOrder* currentOrder = orders.front();
+            orders.pop();
+            return currentOrder;
+        }else{
+            return nullptr;
+        }
+    }
+    int getPendingCount(){return orders.size();}
+
+};
+
+int main(){
+
+    DeliveryQueue orderQue;
+
+    ExpressDelivery* order1 = new ExpressDelivery("A56G78","Civil Line 204-A", 510.00);
+    ExpressDelivery* order2 = new ExpressDelivery("N23D94","Asharfabad 314-H", 1350.00);
+
+    StandardDelivery* order3 = new StandardDelivery("T45E54", "Motinagar", 810.00);
+    StandardDelivery* order4 = new StandardDelivery("L15O09", "K.D.A Colony", 1690.00);
+
+    orderQue.placeOrder(order1);
+    orderQue.placeOrder(order2);
+    orderQue.placeOrder(order3);
+    orderQue.placeOrder(order4);
+    
+    while(orderQue.getPendingCount() > 0){
+        DeliveryOrder* summary = orderQue.dispatchNext();
+        if(summary != nullptr){
+            std::cout << summary->getOrderSummary();
+            std::cout << "Pending Orders: " << orderQue.getPendingCount() << std::endl;
+        }
+    };
+
+    delete order1;
+    delete order2;
+    delete order3;
+    delete order4;
+    
+    return 0;
+}
